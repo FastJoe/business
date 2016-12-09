@@ -22,6 +22,7 @@ days, and which days are holidays.
 ```ruby
 calendar = Business::Calendar.new(
   working_days: %w( mon tue wed thu fri ),
+  working_dates: ["02/01/2017", "03/01/2017"]
   holidays: ["01/01/2014", "03/01/2014"]
 )
 ```
