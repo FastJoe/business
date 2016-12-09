@@ -19,7 +19,7 @@ module Business
       raise "No such calendar '#{calendar}'" unless directory
 
       yaml = YAML.load_file(File.join(directory, "#{calendar}.yml"))
-      self.new(holidays: yaml['holidays'], working_days: yaml['working_days'])
+      self.new(holidays: yaml['holidays'], working_days: yaml['working_days'], working_dates: yaml['working_dates'])
     end
 
     @lock = Mutex.new
@@ -35,10 +35,11 @@ module Business
 
     DAY_NAMES = %( mon tue wed thu fri sat sun )
 
-    attr_reader :working_days, :holidays
+    attr_reader :working_days, :holidays, :working_dates
 
     def initialize(config)
       set_working_days(config[:working_days])
+      working_dates(config[:working_dates])
       set_holidays(config[:holidays])
     end
 
@@ -46,6 +47,7 @@ module Business
     # non-weekend day) and not a holiday.
     def business_day?(date)
       date = date.to_date
+      return true if working_dates.include?(date)
       return false unless working_days.include?(date.strftime('%a').downcase)
       return false if holidays.include?(date)
       true
@@ -166,6 +168,10 @@ module Business
     # Internal method for assigning holidays from a calendar config.
     def set_holidays(holidays)
       @holidays = (holidays || []).map { |holiday| Date.parse(holiday) }
+    end
+
+    def working_dates(days)
+      @working_dates = (days || []).map { |day| Date.parse(day) }
     end
 
     # If no working days are provided in the calendar config, these are used.
