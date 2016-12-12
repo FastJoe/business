@@ -39,7 +39,7 @@ module Business
 
     def initialize(config)
       set_working_days(config[:working_days])
-      working_dates(config[:working_dates])
+      set_working_dates(config[:working_dates])
       set_holidays(config[:holidays])
     end
 
@@ -167,11 +167,11 @@ module Business
 
     # Internal method for assigning holidays from a calendar config.
     def set_holidays(holidays)
-      @holidays = (holidays || []).map { |holiday| Date.parse(holiday) }
+      @holidays = (holidays || []).map { |holiday| holiday.is_a?(Date) ? holiday : Date.parse(holiday) }
     end
 
-    def working_dates(days)
-      @working_dates = (days || []).map { |day| Date.parse(day) }
+    def set_working_dates(working_dates)
+      @working_dates = (working_dates || []).map { |wdate| wdate.is_a?(Date) ? wdate : Date.parse(wdate) }
     end
 
     # If no working days are provided in the calendar config, these are used.

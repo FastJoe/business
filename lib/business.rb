@@ -1,1 +1,1 @@
-require 'business/calendar'
+require_relative 'business/calendar'
